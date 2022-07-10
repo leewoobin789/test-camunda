@@ -27,3 +27,9 @@ cluster-setup: kind-delete kind-setup dep-setup deploy-service
 
 produce-via-app:
 	kubectl exec ${PRODUCER-POD-NAME} -- curl localhost:8080/send?number=${NUM}
+
+pf-cc:
+	kubectl port-forward service/demo-cp-control-center 9021:9021
+
+pf-sr:
+	kubectl port-forward service/demo-cp-schema-registry 8081:8081
