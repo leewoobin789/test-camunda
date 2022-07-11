@@ -1,6 +1,7 @@
 package endpoint
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/leewoobin789/test-camunda/producer-service/src/controller"
@@ -8,8 +9,10 @@ import (
 )
 
 func ReturnBundle() []controller.Handler {
-	server := os.Getenv("KAFKA_SERVER")
-	customProducer := producer.NewCustomKafkaProducer(server)
+	kafkaServer := os.Getenv("KAFKA_SERVER")
+	schemaRegistryUrl := os.Getenv("SCHEMA_REGISTRY_SERVER")
+	fmt.Println(kafkaServer, schemaRegistryUrl)
+	customProducer := producer.NewCustomKafkaProducer(kafkaServer, schemaRegistryUrl)
 	return []controller.Handler{
 		newSendEndpoint(customProducer),
 		newhealthEndpoint(),

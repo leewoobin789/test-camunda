@@ -41,6 +41,8 @@ spec:
         env:
         - name: KAFKA_SERVER
           value: demo-cp-kafka:9092
+        - name: SCHEMA_REGISTRY_SERVER
+          value: http://demo-cp-schema-registry:8081
         - name: KAFKA_TOPIC
           value: com.topic.in
         - name: POD_NAME

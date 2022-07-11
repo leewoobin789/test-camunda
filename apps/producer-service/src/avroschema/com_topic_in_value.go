@@ -3,7 +3,7 @@
  * SOURCE:
  *     value-schema.avsc
  */
-package avro
+package avroschema
 
 import (
 	"encoding/json"
@@ -17,35 +17,33 @@ import (
 
 var _ = fmt.Printf
 
-// value schema for incoming topic
+// value schema for incoming topic ex) order
 type ComTopicInValue struct {
-	// int field
-	IntField int32 `json:"IntField"`
+	Name string `json:"Name"`
 
-	LongField int64 `json:"LongField"`
+	FamilyName string `json:"FamilyName"`
 
-	FloatField float32 `json:"FloatField"`
+	Birth int32 `json:"Birth"`
 
-	DoubleField float64 `json:"DoubleField"`
+	CustomId string `json:"CustomId"`
 
-	StringField string `json:"StringField"`
+	UnitPrice float64 `json:"UnitPrice"`
 
-	BoolField bool `json:"BoolField"`
+	Amount int32 `json:"Amount"`
 
-	BytesField Bytes `json:"BytesField"`
+	Credit float64 `json:"Credit"`
+
+	Distance int32 `json:"Distance"`
 }
 
-const ComTopicInValueAvroCRC64Fingerprint = ".\xc6g#\xce\x03W\xe5"
+const ComTopicInValueAvroCRC64Fingerprint = "\x14\xbdģ;\x1f\x83\xd2"
 
 func NewComTopicInValue() ComTopicInValue {
 	r := ComTopicInValue{}
-	r.IntField = 1.2345689e+07
-	r.LongField = 2.3456789e+08
-	r.FloatField = 1e+08
-	r.DoubleField = 800000
-	r.StringField = "defaultstring"
-	r.BoolField = true
-	r.BytesField = []byte("\x04\x01\x05\xfd")
+	r.UnitPrice = 0
+	r.Amount = 0
+	r.Credit = 0
+	r.Distance = 0
 	return r
 }
 
@@ -74,31 +72,35 @@ func DeserializeComTopicInValueFromSchema(r io.Reader, schema string) (ComTopicI
 
 func writeComTopicInValue(r ComTopicInValue, w io.Writer) error {
 	var err error
-	err = vm.WriteInt(r.IntField, w)
+	err = vm.WriteString(r.Name, w)
 	if err != nil {
 		return err
 	}
-	err = vm.WriteLong(r.LongField, w)
+	err = vm.WriteString(r.FamilyName, w)
 	if err != nil {
 		return err
 	}
-	err = vm.WriteFloat(r.FloatField, w)
+	err = vm.WriteInt(r.Birth, w)
 	if err != nil {
 		return err
 	}
-	err = vm.WriteDouble(r.DoubleField, w)
+	err = vm.WriteString(r.CustomId, w)
 	if err != nil {
 		return err
 	}
-	err = vm.WriteString(r.StringField, w)
+	err = vm.WriteDouble(r.UnitPrice, w)
 	if err != nil {
 		return err
 	}
-	err = vm.WriteBool(r.BoolField, w)
+	err = vm.WriteInt(r.Amount, w)
 	if err != nil {
 		return err
 	}
-	err = vm.WriteBytes(r.BytesField, w)
+	err = vm.WriteDouble(r.Credit, w)
+	if err != nil {
+		return err
+	}
+	err = vm.WriteInt(r.Distance, w)
 	if err != nil {
 		return err
 	}
@@ -110,7 +112,7 @@ func (r ComTopicInValue) Serialize(w io.Writer) error {
 }
 
 func (r ComTopicInValue) Schema() string {
-	return "{\"doc\":\"value schema for incoming topic\",\"fields\":[{\"default\":12345689,\"doc\":\"int\\nfield\",\"name\":\"IntField\",\"type\":\"int\"},{\"default\":234567890,\"name\":\"LongField\",\"type\":\"long\"},{\"default\":100000000,\"name\":\"FloatField\",\"type\":\"float\"},{\"default\":800000,\"name\":\"DoubleField\",\"type\":\"double\"},{\"default\":\"defaultstring\",\"name\":\"StringField\",\"type\":\"string\"},{\"default\":true,\"name\":\"BoolField\",\"type\":\"boolean\"},{\"default\":\"\\u0004\\u0001\\u0005ý\",\"name\":\"BytesField\",\"type\":\"bytes\"}],\"name\":\"ComTopicInValue\",\"type\":\"record\"}"
+	return "{\"doc\":\"value schema for incoming topic ex) order\",\"fields\":[{\"name\":\"Name\",\"type\":\"string\"},{\"name\":\"FamilyName\",\"type\":\"string\"},{\"name\":\"Birth\",\"type\":{\"logicalType\":\"date\",\"type\":\"int\"}},{\"name\":\"CustomId\",\"type\":\"string\"},{\"default\":0,\"name\":\"UnitPrice\",\"type\":\"double\"},{\"default\":0,\"name\":\"Amount\",\"type\":\"int\"},{\"default\":0,\"name\":\"Credit\",\"type\":\"double\"},{\"default\":0,\"name\":\"Distance\",\"type\":\"int\"}],\"name\":\"ComTopicInValue\",\"type\":\"record\"}"
 }
 
 func (r ComTopicInValue) SchemaName() string {
@@ -129,37 +131,42 @@ func (_ ComTopicInValue) SetUnionElem(v int64) { panic("Unsupported operation") 
 func (r *ComTopicInValue) Get(i int) types.Field {
 	switch i {
 	case 0:
-		w := types.Int{Target: &r.IntField}
+		w := types.String{Target: &r.Name}
 
 		return w
 
 	case 1:
-		w := types.Long{Target: &r.LongField}
+		w := types.String{Target: &r.FamilyName}
 
 		return w
 
 	case 2:
-		w := types.Float{Target: &r.FloatField}
+		w := types.Int{Target: &r.Birth}
 
 		return w
 
 	case 3:
-		w := types.Double{Target: &r.DoubleField}
+		w := types.String{Target: &r.CustomId}
 
 		return w
 
 	case 4:
-		w := types.String{Target: &r.StringField}
+		w := types.Double{Target: &r.UnitPrice}
 
 		return w
 
 	case 5:
-		w := types.Boolean{Target: &r.BoolField}
+		w := types.Int{Target: &r.Amount}
 
 		return w
 
 	case 6:
-		w := BytesWrapper{Target: &r.BytesField}
+		w := types.Double{Target: &r.Credit}
+
+		return w
+
+	case 7:
+		w := types.Int{Target: &r.Distance}
 
 		return w
 
@@ -169,26 +176,17 @@ func (r *ComTopicInValue) Get(i int) types.Field {
 
 func (r *ComTopicInValue) SetDefault(i int) {
 	switch i {
-	case 0:
-		r.IntField = 1.2345689e+07
-		return
-	case 1:
-		r.LongField = 2.3456789e+08
-		return
-	case 2:
-		r.FloatField = 1e+08
-		return
-	case 3:
-		r.DoubleField = 800000
-		return
 	case 4:
-		r.StringField = "defaultstring"
+		r.UnitPrice = 0
 		return
 	case 5:
-		r.BoolField = true
+		r.Amount = 0
 		return
 	case 6:
-		r.BytesField = []byte("\x04\x01\x05\xfd")
+		r.Credit = 0
+		return
+	case 7:
+		r.Distance = 0
 		return
 	}
 	panic("Unknown field index")
@@ -212,31 +210,35 @@ func (_ ComTopicInValue) AvroCRC64Fingerprint() []byte {
 func (r ComTopicInValue) MarshalJSON() ([]byte, error) {
 	var err error
 	output := make(map[string]json.RawMessage)
-	output["IntField"], err = json.Marshal(r.IntField)
+	output["Name"], err = json.Marshal(r.Name)
 	if err != nil {
 		return nil, err
 	}
-	output["LongField"], err = json.Marshal(r.LongField)
+	output["FamilyName"], err = json.Marshal(r.FamilyName)
 	if err != nil {
 		return nil, err
 	}
-	output["FloatField"], err = json.Marshal(r.FloatField)
+	output["Birth"], err = json.Marshal(r.Birth)
 	if err != nil {
 		return nil, err
 	}
-	output["DoubleField"], err = json.Marshal(r.DoubleField)
+	output["CustomId"], err = json.Marshal(r.CustomId)
 	if err != nil {
 		return nil, err
 	}
-	output["StringField"], err = json.Marshal(r.StringField)
+	output["UnitPrice"], err = json.Marshal(r.UnitPrice)
 	if err != nil {
 		return nil, err
 	}
-	output["BoolField"], err = json.Marshal(r.BoolField)
+	output["Amount"], err = json.Marshal(r.Amount)
 	if err != nil {
 		return nil, err
 	}
-	output["BytesField"], err = json.Marshal(r.BytesField)
+	output["Credit"], err = json.Marshal(r.Credit)
+	if err != nil {
+		return nil, err
+	}
+	output["Distance"], err = json.Marshal(r.Distance)
 	if err != nil {
 		return nil, err
 	}
@@ -251,102 +253,116 @@ func (r *ComTopicInValue) UnmarshalJSON(data []byte) error {
 
 	var val json.RawMessage
 	val = func() json.RawMessage {
-		if v, ok := fields["IntField"]; ok {
+		if v, ok := fields["Name"]; ok {
 			return v
 		}
 		return nil
 	}()
 
 	if val != nil {
-		if err := json.Unmarshal([]byte(val), &r.IntField); err != nil {
+		if err := json.Unmarshal([]byte(val), &r.Name); err != nil {
 			return err
 		}
 	} else {
-		r.IntField = 1.2345689e+07
+		return fmt.Errorf("no value specified for Name")
 	}
 	val = func() json.RawMessage {
-		if v, ok := fields["LongField"]; ok {
+		if v, ok := fields["FamilyName"]; ok {
 			return v
 		}
 		return nil
 	}()
 
 	if val != nil {
-		if err := json.Unmarshal([]byte(val), &r.LongField); err != nil {
+		if err := json.Unmarshal([]byte(val), &r.FamilyName); err != nil {
 			return err
 		}
 	} else {
-		r.LongField = 2.3456789e+08
+		return fmt.Errorf("no value specified for FamilyName")
 	}
 	val = func() json.RawMessage {
-		if v, ok := fields["FloatField"]; ok {
+		if v, ok := fields["Birth"]; ok {
 			return v
 		}
 		return nil
 	}()
 
 	if val != nil {
-		if err := json.Unmarshal([]byte(val), &r.FloatField); err != nil {
+		if err := json.Unmarshal([]byte(val), &r.Birth); err != nil {
 			return err
 		}
 	} else {
-		r.FloatField = 1e+08
+		return fmt.Errorf("no value specified for Birth")
 	}
 	val = func() json.RawMessage {
-		if v, ok := fields["DoubleField"]; ok {
+		if v, ok := fields["CustomId"]; ok {
 			return v
 		}
 		return nil
 	}()
 
 	if val != nil {
-		if err := json.Unmarshal([]byte(val), &r.DoubleField); err != nil {
+		if err := json.Unmarshal([]byte(val), &r.CustomId); err != nil {
 			return err
 		}
 	} else {
-		r.DoubleField = 800000
+		return fmt.Errorf("no value specified for CustomId")
 	}
 	val = func() json.RawMessage {
-		if v, ok := fields["StringField"]; ok {
+		if v, ok := fields["UnitPrice"]; ok {
 			return v
 		}
 		return nil
 	}()
 
 	if val != nil {
-		if err := json.Unmarshal([]byte(val), &r.StringField); err != nil {
+		if err := json.Unmarshal([]byte(val), &r.UnitPrice); err != nil {
 			return err
 		}
 	} else {
-		r.StringField = "defaultstring"
+		r.UnitPrice = 0
 	}
 	val = func() json.RawMessage {
-		if v, ok := fields["BoolField"]; ok {
+		if v, ok := fields["Amount"]; ok {
 			return v
 		}
 		return nil
 	}()
 
 	if val != nil {
-		if err := json.Unmarshal([]byte(val), &r.BoolField); err != nil {
+		if err := json.Unmarshal([]byte(val), &r.Amount); err != nil {
 			return err
 		}
 	} else {
-		r.BoolField = true
+		r.Amount = 0
 	}
 	val = func() json.RawMessage {
-		if v, ok := fields["BytesField"]; ok {
+		if v, ok := fields["Credit"]; ok {
 			return v
 		}
 		return nil
 	}()
 
 	if val != nil {
-		if err := json.Unmarshal([]byte(val), &r.BytesField); err != nil {
+		if err := json.Unmarshal([]byte(val), &r.Credit); err != nil {
 			return err
 		}
 	} else {
-		r.BytesField = []byte("\x04\x01\x05\xfd")
+		r.Credit = 0
+	}
+	val = func() json.RawMessage {
+		if v, ok := fields["Distance"]; ok {
+			return v
+		}
+		return nil
+	}()
+
+	if val != nil {
+		if err := json.Unmarshal([]byte(val), &r.Distance); err != nil {
+			return err
+		}
+	} else {
+		r.Distance = 0
 	}
 	return nil
 }

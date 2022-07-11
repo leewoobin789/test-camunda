@@ -2,8 +2,12 @@
 
 todo: 
 
-- schema registry
+- schema registry: go producer "DONE"
 
-- https://github.com/camunda/camunda-platform-helm/blob/67ae8a9996ddf1039439f2d437aaa89a7b3d890c/kind/camunda-platform-core-kind-values.yaml
+- schema registry: java consumer
+
+- camunda helm setup
+
+- camunda worker setup
 
 - camunda connect

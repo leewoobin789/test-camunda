@@ -1,0 +1,44 @@
+global:
+  identity:
+    auth:
+      enabled: false
+
+identity:
+  enabled: false
+
+optimize:
+  enabled: false
+
+zeebe:
+  clusterSize: 1
+  partitionCount: 1
+  replicationFactor: 1
+  pvcSize: 10Gi
+
+zeebe-gateway:
+  replicas: 1
+
+elasticsearch:
+  imageTag: 7.8.1 # due to legacy setting of elasticsearch helm chart
+  replicas: 1
+  minimumMasterNodes: 1
+  roles:
+    master: "true"
+    ingest: "true"
+    data: "true"
+    remote_cluster_client: "true"
+    ml: "true"
+  clusterHealthCheckParams: "wait_for_status=yellow&timeout=1s"
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "512M"
+    limits:
+      cpu: "1000m"
+      memory: "512M"
+  volumeClaimTemplate:
+    accessModes: [ "ReadWriteOnce" ]
+    storageClassName: "standard"
+    resources:
+      requests:
+        storage: 15Gi

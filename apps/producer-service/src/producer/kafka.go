@@ -1,52 +1,54 @@
 package producer
 
 import (
-	"encoding/json"
-	"os"
-
-	cloudevents "github.com/cloudevents/sdk-go/v2"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
-	"github.com/google/uuid"
+	"github.com/confluentinc/confluent-kafka-go/schemaregistry"
+	"github.com/confluentinc/confluent-kafka-go/schemaregistry/serde"
+	"github.com/confluentinc/confluent-kafka-go/schemaregistry/serde/avro"
 )
 
 type CustomProducer interface {
-	Send(topic string, msg string) error
+	Send(topic string, key string, value any) error
 }
 
 type CustomKafkaProducer struct {
-	producer *kafka.Producer
+	producer   *kafka.Producer
+	serializer *avro.SpecificSerializer
 }
 
-func NewCustomKafkaProducer(server string) CustomProducer {
-	kafkaProducer, err := kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": server})
+func NewCustomKafkaProducer(kafkaServer string, schemaRegistryUrl string) CustomProducer {
+	config := schemaregistry.NewConfig(schemaRegistryUrl)
+	client, err := schemaregistry.NewClient(config)
+
+	if err != nil {
+		panic(err)
+	}
+
+	avroSerializer, err := avro.NewSpecificSerializer(client, serde.ValueSerde, avro.NewSerializerConfig())
+
+	if err != nil {
+		panic(err)
+	}
+
+	kafkaProducer, err := kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": kafkaServer})
 	if err != nil {
 		panic(err)
 	}
 	return CustomKafkaProducer{
-		producer: kafkaProducer,
+		producer:   kafkaProducer,
+		serializer: avroSerializer,
 	}
 }
 
-func (k CustomKafkaProducer) Send(topic string, msg string) error {
-	podName := os.Getenv("POD_NAME")
-	msgId := uuid.New().String()
-
-	event := cloudevents.NewEvent()
-	err := event.SetData(cloudevents.TextPlain, msg)
+func (k CustomKafkaProducer) Send(topic string, key string, value any) error {
+	payload, err := k.serializer.Serialize(topic, &value)
 	if err != nil {
 		return err
 	}
 
-	event.SetID(msgId)
-	event.SetSource(podName)
-	event.SetType("github.com/leewoobin789/camunda-test/apps/producer-service/producer/kafka")
-
-	marshaled, err := json.Marshal(event)
-	if err != nil {
-		return err
-	}
 	return k.producer.Produce(&kafka.Message{
 		TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
-		Value:          marshaled,
+		Key:            []byte(key),
+		Value:          payload,
 	}, nil)
 }

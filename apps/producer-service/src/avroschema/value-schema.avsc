@@ -1,0 +1,46 @@
+{
+	"type": "record",
+	"name": "ComTopicInValue",
+	"doc": "value schema for incoming topic ex) order",
+	"fields": [
+		{
+			"name": "Name", 
+			"type": "string"
+		},
+		{
+			"name": "FamilyName", 
+			"type": "string"
+		},
+		{
+			"name": "Birth", 
+			"type": {
+				"type": "int",
+				"logicalType": "date"
+			}
+		},
+		{
+			"name": "CustomId", 
+			"type": "string"
+		},
+		{
+			"name": "UnitPrice", 
+			"type": "double", 
+			"default": 0
+		},
+		{
+			"name": "Amount", 
+			"type": "int", 
+			"default": 0
+		},
+		{
+			"name": "Credit", 
+			"type": "double", 
+			"default": 0
+		},
+		{
+			"name": "Distance",
+			"type": "int",
+			"default": 0
+		}
+	]
+}

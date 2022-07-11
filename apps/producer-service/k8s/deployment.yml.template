@@ -41,6 +41,8 @@ spec:
         env:
         - name: KAFKA_SERVER
           value: VALUE_KAFKA_BOOTSTRAP
+        - name: SCHEMA_REGISTRY_SERVER
+          value: VALUE_SCHEMA_REGISTRY_SERVER
         - name: KAFKA_TOPIC
           value: VALUE_KAFKA_TOPIC
         - name: POD_NAME

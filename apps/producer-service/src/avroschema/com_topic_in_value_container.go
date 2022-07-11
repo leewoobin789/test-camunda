@@ -3,7 +3,7 @@
  * SOURCE:
  *     value-schema.avsc
  */
-package avro
+package avroschema
 
 import (
 	"io"

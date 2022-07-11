@@ -4,8 +4,6 @@ NAMESPACE = demo
 
 PRODUCER-POD-NAME= $(shell kubectl get pods --no-headers -o custom-columns=":metadata.name" | grep "producer-service")
 
-.PHONY: dep-setup kind-delete kind-setup cluster-setup producer-console producer-app
-
 dep-setup: 
 	bash setup_dep.sh ${CLUSTER_NAME} ${NAMESPACE} false
 

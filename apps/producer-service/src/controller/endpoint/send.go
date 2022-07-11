@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/google/uuid"
+	"github.com/leewoobin789/test-camunda/producer-service/src/avroschema"
 	"github.com/leewoobin789/test-camunda/producer-service/src/controller"
 	"github.com/leewoobin789/test-camunda/producer-service/src/producer"
 )
@@ -48,11 +50,21 @@ func (e sendEndpoint) Run(w http.ResponseWriter, r *http.Request) {
 		controller.RespondwithJSON(w, http.StatusNotAcceptable, Response)
 	}
 
-	msg := "randomMessage"
+	keyProductID := uuid.NewString()
+	value := avroschema.ComTopicInValue{
+		Name:       "Woobin",
+		FamilyName: "Lee",
+		Birth:      0, // TODO:
+		CustomId:   "mycustomid-1234",
+		UnitPrice:  12.95,
+		Amount:     5,
+		Credit:     10,
+		Distance:   10,
+	}
 
 	for i := 0; i <= num; i++ {
 		time.Sleep(time.Millisecond * 100)
-		if err := e.producer.Send(TOPIC, msg); err != nil {
+		if err := e.producer.Send(TOPIC, keyProductID, value); err != nil {
 			Response.Message = err.Error()
 			break
 		}
