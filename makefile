@@ -14,12 +14,12 @@ kind-delete:
 	kind delete cluster --name ${CLUSTER_NAME}
 
 kind-setup:
-	kind create cluster --config=./kind-config.yml
+	kind create cluster --config=./config/kind-config.yml
 	kubectl config use-context ${CLUSTER_FULL_NAME}
 	kubectl create namespace ${NAMESPACE}
 	kubectl config set-context --current --namespace=$(NAMESPACE)
 	kubectl create secret docker-registry regcred --docker-username=RANDOM --docker-password=RANDOM --docker-email=RANDOM
-	kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+	kubectl apply -f ./config/metric-server.yaml
 
 cluster-setup: kind-delete kind-setup dep-setup deploy-service
 

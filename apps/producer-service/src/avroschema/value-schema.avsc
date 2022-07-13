@@ -1,6 +1,7 @@
 {
 	"type": "record",
-	"name": "ComTopicInValue",
+	"name": "Order",
+	"namespace" : "de.topic.in",
 	"doc": "value schema for incoming topic ex) order",
 	"fields": [
 		{

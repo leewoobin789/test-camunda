@@ -19,7 +19,7 @@ zeebe-gateway:
   replicas: 1
 
 elasticsearch:
-  imageTag: 7.8.1 # due to legacy setting of elasticsearch helm chart
+  imageTag: 7.17.1 # due to legacy setting of elasticsearch helm chart
   replicas: 1
   minimumMasterNodes: 1
   roles:

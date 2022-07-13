@@ -18,7 +18,7 @@ import (
 var _ = fmt.Printf
 
 // value schema for incoming topic ex) order
-type ComTopicInValue struct {
+type Order struct {
 	Name string `json:"Name"`
 
 	FamilyName string `json:"FamilyName"`
@@ -36,10 +36,10 @@ type ComTopicInValue struct {
 	Distance int32 `json:"Distance"`
 }
 
-const ComTopicInValueAvroCRC64Fingerprint = "\x14\xbdģ;\x1f\x83\xd2"
+const OrderAvroCRC64Fingerprint = "\x93߁\xcdj;NE"
 
-func NewComTopicInValue() ComTopicInValue {
-	r := ComTopicInValue{}
+func NewOrder() Order {
+	r := Order{}
 	r.UnitPrice = 0
 	r.Amount = 0
 	r.Credit = 0
@@ -47,8 +47,8 @@ func NewComTopicInValue() ComTopicInValue {
 	return r
 }
 
-func DeserializeComTopicInValue(r io.Reader) (ComTopicInValue, error) {
-	t := NewComTopicInValue()
+func DeserializeOrder(r io.Reader) (Order, error) {
+	t := NewOrder()
 	deser, err := compiler.CompileSchemaBytes([]byte(t.Schema()), []byte(t.Schema()))
 	if err != nil {
 		return t, err
@@ -58,8 +58,8 @@ func DeserializeComTopicInValue(r io.Reader) (ComTopicInValue, error) {
 	return t, err
 }
 
-func DeserializeComTopicInValueFromSchema(r io.Reader, schema string) (ComTopicInValue, error) {
-	t := NewComTopicInValue()
+func DeserializeOrderFromSchema(r io.Reader, schema string) (Order, error) {
+	t := NewOrder()
 
 	deser, err := compiler.CompileSchemaBytes([]byte(schema), []byte(t.Schema()))
 	if err != nil {
@@ -70,7 +70,7 @@ func DeserializeComTopicInValueFromSchema(r io.Reader, schema string) (ComTopicI
 	return t, err
 }
 
-func writeComTopicInValue(r ComTopicInValue, w io.Writer) error {
+func writeOrder(r Order, w io.Writer) error {
 	var err error
 	err = vm.WriteString(r.Name, w)
 	if err != nil {
@@ -107,28 +107,28 @@ func writeComTopicInValue(r ComTopicInValue, w io.Writer) error {
 	return err
 }
 
-func (r ComTopicInValue) Serialize(w io.Writer) error {
-	return writeComTopicInValue(r, w)
+func (r Order) Serialize(w io.Writer) error {
+	return writeOrder(r, w)
 }
 
-func (r ComTopicInValue) Schema() string {
-	return "{\"doc\":\"value schema for incoming topic ex) order\",\"fields\":[{\"name\":\"Name\",\"type\":\"string\"},{\"name\":\"FamilyName\",\"type\":\"string\"},{\"name\":\"Birth\",\"type\":{\"logicalType\":\"date\",\"type\":\"int\"}},{\"name\":\"CustomId\",\"type\":\"string\"},{\"default\":0,\"name\":\"UnitPrice\",\"type\":\"double\"},{\"default\":0,\"name\":\"Amount\",\"type\":\"int\"},{\"default\":0,\"name\":\"Credit\",\"type\":\"double\"},{\"default\":0,\"name\":\"Distance\",\"type\":\"int\"}],\"name\":\"ComTopicInValue\",\"type\":\"record\"}"
+func (r Order) Schema() string {
+	return "{\"doc\":\"value schema for incoming topic ex) order\",\"fields\":[{\"name\":\"Name\",\"type\":\"string\"},{\"name\":\"FamilyName\",\"type\":\"string\"},{\"name\":\"Birth\",\"type\":{\"logicalType\":\"date\",\"type\":\"int\"}},{\"name\":\"CustomId\",\"type\":\"string\"},{\"default\":0,\"name\":\"UnitPrice\",\"type\":\"double\"},{\"default\":0,\"name\":\"Amount\",\"type\":\"int\"},{\"default\":0,\"name\":\"Credit\",\"type\":\"double\"},{\"default\":0,\"name\":\"Distance\",\"type\":\"int\"}],\"name\":\"de.topic.in.Order\",\"type\":\"record\"}"
 }
 
-func (r ComTopicInValue) SchemaName() string {
-	return "ComTopicInValue"
+func (r Order) SchemaName() string {
+	return "de.topic.in.Order"
 }
 
-func (_ ComTopicInValue) SetBoolean(v bool)    { panic("Unsupported operation") }
-func (_ ComTopicInValue) SetInt(v int32)       { panic("Unsupported operation") }
-func (_ ComTopicInValue) SetLong(v int64)      { panic("Unsupported operation") }
-func (_ ComTopicInValue) SetFloat(v float32)   { panic("Unsupported operation") }
-func (_ ComTopicInValue) SetDouble(v float64)  { panic("Unsupported operation") }
-func (_ ComTopicInValue) SetBytes(v []byte)    { panic("Unsupported operation") }
-func (_ ComTopicInValue) SetString(v string)   { panic("Unsupported operation") }
-func (_ ComTopicInValue) SetUnionElem(v int64) { panic("Unsupported operation") }
+func (_ Order) SetBoolean(v bool)    { panic("Unsupported operation") }
+func (_ Order) SetInt(v int32)       { panic("Unsupported operation") }
+func (_ Order) SetLong(v int64)      { panic("Unsupported operation") }
+func (_ Order) SetFloat(v float32)   { panic("Unsupported operation") }
+func (_ Order) SetDouble(v float64)  { panic("Unsupported operation") }
+func (_ Order) SetBytes(v []byte)    { panic("Unsupported operation") }
+func (_ Order) SetString(v string)   { panic("Unsupported operation") }
+func (_ Order) SetUnionElem(v int64) { panic("Unsupported operation") }
 
-func (r *ComTopicInValue) Get(i int) types.Field {
+func (r *Order) Get(i int) types.Field {
 	switch i {
 	case 0:
 		w := types.String{Target: &r.Name}
@@ -174,7 +174,7 @@ func (r *ComTopicInValue) Get(i int) types.Field {
 	panic("Unknown field index")
 }
 
-func (r *ComTopicInValue) SetDefault(i int) {
+func (r *Order) SetDefault(i int) {
 	switch i {
 	case 4:
 		r.UnitPrice = 0
@@ -192,22 +192,22 @@ func (r *ComTopicInValue) SetDefault(i int) {
 	panic("Unknown field index")
 }
 
-func (r *ComTopicInValue) NullField(i int) {
+func (r *Order) NullField(i int) {
 	switch i {
 	}
 	panic("Not a nullable field index")
 }
 
-func (_ ComTopicInValue) AppendMap(key string) types.Field { panic("Unsupported operation") }
-func (_ ComTopicInValue) AppendArray() types.Field         { panic("Unsupported operation") }
-func (_ ComTopicInValue) HintSize(int)                     { panic("Unsupported operation") }
-func (_ ComTopicInValue) Finalize()                        {}
+func (_ Order) AppendMap(key string) types.Field { panic("Unsupported operation") }
+func (_ Order) AppendArray() types.Field         { panic("Unsupported operation") }
+func (_ Order) HintSize(int)                     { panic("Unsupported operation") }
+func (_ Order) Finalize()                        {}
 
-func (_ ComTopicInValue) AvroCRC64Fingerprint() []byte {
-	return []byte(ComTopicInValueAvroCRC64Fingerprint)
+func (_ Order) AvroCRC64Fingerprint() []byte {
+	return []byte(OrderAvroCRC64Fingerprint)
 }
 
-func (r ComTopicInValue) MarshalJSON() ([]byte, error) {
+func (r Order) MarshalJSON() ([]byte, error) {
 	var err error
 	output := make(map[string]json.RawMessage)
 	output["Name"], err = json.Marshal(r.Name)
@@ -245,7 +245,7 @@ func (r ComTopicInValue) MarshalJSON() ([]byte, error) {
 	return json.Marshal(output)
 }
 
-func (r *ComTopicInValue) UnmarshalJSON(data []byte) error {
+func (r *Order) UnmarshalJSON(data []byte) error {
 	var fields map[string]json.RawMessage
 	if err := json.Unmarshal(data, &fields); err != nil {
 		return err

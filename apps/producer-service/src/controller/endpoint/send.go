@@ -51,7 +51,7 @@ func (e sendEndpoint) Run(w http.ResponseWriter, r *http.Request) {
 	}
 
 	keyProductID := uuid.NewString()
-	value := avroschema.ComTopicInValue{
+	value := avroschema.Order{
 		Name:       "Woobin",
 		FamilyName: "Lee",
 		Birth:      0, // TODO:

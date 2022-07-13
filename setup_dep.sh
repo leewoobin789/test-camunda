@@ -104,6 +104,7 @@ setup_camunda_cluster() {
 }
 # setup_camunda_workers
 
+
 ##### Delegation takes place
 if [ "$DO_DEPLOY" = true ]; then
     delete "$CONSUMER_SERVICE"

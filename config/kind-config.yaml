@@ -8,5 +8,3 @@ nodes:
       hostPort: 30000
       listenAddress: "0.0.0.0"
       protocol: tcp
-  - role: worker # two worker nodes
-  - role: worker
