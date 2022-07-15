@@ -12,7 +12,7 @@ cp-zookeeper:
 ## ------------------------------------------------------
 cp-kafka:
   enabled: true
-  brokers: 1
+  brokers: 2
   image: confluentinc/cp-enterprise-kafka
   imageTag: 6.1.0
 

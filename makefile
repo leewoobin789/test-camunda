@@ -14,7 +14,7 @@ kind-delete:
 	kind delete cluster --name ${CLUSTER_NAME}
 
 kind-setup:
-	kind create cluster --config=./config/kind-config.yml
+	kind create cluster --config=./config/kind-config.yaml
 	kubectl config use-context ${CLUSTER_FULL_NAME}
 	kubectl create namespace ${NAMESPACE}
 	kubectl config set-context --current --namespace=$(NAMESPACE)

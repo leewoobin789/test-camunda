@@ -126,6 +126,7 @@ else
     if [ -z "${CONSUMER_EXISTENCE}" ]; then
         wait_for_Kafka
         create_topic "$INCOMING_TOPIC"
+        sleep 2
         create_topic "$OUTGOING_TOPIC"
     fi
 fi

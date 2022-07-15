@@ -11,9 +11,9 @@ kind: ClusterRole
 metadata:
   labels:
     k8s-app: metrics-server
-    rbac.authorization.k8s.io/aggregate-to-admin: true
-    rbac.authorization.k8s.io/aggregate-to-edit: true
-    rbac.authorization.k8s.io/aggregate-to-view: true
+    rbac.authorization.k8s.io/aggregate-to-admin: "true"
+    rbac.authorization.k8s.io/aggregate-to-edit: "true"
+    rbac.authorization.k8s.io/aggregate-to-view: "true"
   name: system:aggregated-metrics-reader
 rules:
 - apiGroups:
@@ -34,7 +34,7 @@ metadata:
   name: system:metrics-server
 rules:
 - apiGroups:
-  - 
+  - ""
   resources:
   - pods
   - nodes

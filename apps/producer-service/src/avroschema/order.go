@@ -19,24 +19,24 @@ var _ = fmt.Printf
 
 // value schema for incoming topic ex) order
 type Order struct {
-	Name string `json:"Name"`
+	Name string `json:"name"`
 
-	FamilyName string `json:"FamilyName"`
+	FamilyName string `json:"familyName"`
 
-	Birth int32 `json:"Birth"`
+	Birth int32 `json:"birth"`
 
-	CustomId string `json:"CustomId"`
+	CustomId string `json:"customId"`
 
-	UnitPrice float64 `json:"UnitPrice"`
+	UnitPrice float64 `json:"unitPrice"`
 
-	Amount int32 `json:"Amount"`
+	Amount int32 `json:"amount"`
 
-	Credit float64 `json:"Credit"`
+	Credit float64 `json:"credit"`
 
-	Distance int32 `json:"Distance"`
+	Distance int32 `json:"distance"`
 }
 
-const OrderAvroCRC64Fingerprint = "\x93߁\xcdj;NE"
+const OrderAvroCRC64Fingerprint = "OY\x8c\x02f\xba\xba\xfe"
 
 func NewOrder() Order {
 	r := Order{}
@@ -112,7 +112,7 @@ func (r Order) Serialize(w io.Writer) error {
 }
 
 func (r Order) Schema() string {
-	return "{\"doc\":\"value schema for incoming topic ex) order\",\"fields\":[{\"name\":\"Name\",\"type\":\"string\"},{\"name\":\"FamilyName\",\"type\":\"string\"},{\"name\":\"Birth\",\"type\":{\"logicalType\":\"date\",\"type\":\"int\"}},{\"name\":\"CustomId\",\"type\":\"string\"},{\"default\":0,\"name\":\"UnitPrice\",\"type\":\"double\"},{\"default\":0,\"name\":\"Amount\",\"type\":\"int\"},{\"default\":0,\"name\":\"Credit\",\"type\":\"double\"},{\"default\":0,\"name\":\"Distance\",\"type\":\"int\"}],\"name\":\"de.topic.in.Order\",\"type\":\"record\"}"
+	return "{\"doc\":\"value schema for incoming topic ex) order\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"familyName\",\"type\":\"string\"},{\"name\":\"birth\",\"type\":{\"logicalType\":\"date\",\"type\":\"int\"}},{\"name\":\"customId\",\"type\":\"string\"},{\"default\":0,\"name\":\"unitPrice\",\"type\":\"double\"},{\"default\":0,\"name\":\"amount\",\"type\":\"int\"},{\"default\":0,\"name\":\"credit\",\"type\":\"double\"},{\"default\":0,\"name\":\"distance\",\"type\":\"int\"}],\"name\":\"de.topic.in.Order\",\"type\":\"record\"}"
 }
 
 func (r Order) SchemaName() string {
@@ -210,35 +210,35 @@ func (_ Order) AvroCRC64Fingerprint() []byte {
 func (r Order) MarshalJSON() ([]byte, error) {
 	var err error
 	output := make(map[string]json.RawMessage)
-	output["Name"], err = json.Marshal(r.Name)
+	output["name"], err = json.Marshal(r.Name)
 	if err != nil {
 		return nil, err
 	}
-	output["FamilyName"], err = json.Marshal(r.FamilyName)
+	output["familyName"], err = json.Marshal(r.FamilyName)
 	if err != nil {
 		return nil, err
 	}
-	output["Birth"], err = json.Marshal(r.Birth)
+	output["birth"], err = json.Marshal(r.Birth)
 	if err != nil {
 		return nil, err
 	}
-	output["CustomId"], err = json.Marshal(r.CustomId)
+	output["customId"], err = json.Marshal(r.CustomId)
 	if err != nil {
 		return nil, err
 	}
-	output["UnitPrice"], err = json.Marshal(r.UnitPrice)
+	output["unitPrice"], err = json.Marshal(r.UnitPrice)
 	if err != nil {
 		return nil, err
 	}
-	output["Amount"], err = json.Marshal(r.Amount)
+	output["amount"], err = json.Marshal(r.Amount)
 	if err != nil {
 		return nil, err
 	}
-	output["Credit"], err = json.Marshal(r.Credit)
+	output["credit"], err = json.Marshal(r.Credit)
 	if err != nil {
 		return nil, err
 	}
-	output["Distance"], err = json.Marshal(r.Distance)
+	output["distance"], err = json.Marshal(r.Distance)
 	if err != nil {
 		return nil, err
 	}
@@ -253,7 +253,7 @@ func (r *Order) UnmarshalJSON(data []byte) error {
 
 	var val json.RawMessage
 	val = func() json.RawMessage {
-		if v, ok := fields["Name"]; ok {
+		if v, ok := fields["name"]; ok {
 			return v
 		}
 		return nil
@@ -264,10 +264,10 @@ func (r *Order) UnmarshalJSON(data []byte) error {
 			return err
 		}
 	} else {
-		return fmt.Errorf("no value specified for Name")
+		return fmt.Errorf("no value specified for name")
 	}
 	val = func() json.RawMessage {
-		if v, ok := fields["FamilyName"]; ok {
+		if v, ok := fields["familyName"]; ok {
 			return v
 		}
 		return nil
@@ -278,10 +278,10 @@ func (r *Order) UnmarshalJSON(data []byte) error {
 			return err
 		}
 	} else {
-		return fmt.Errorf("no value specified for FamilyName")
+		return fmt.Errorf("no value specified for familyName")
 	}
 	val = func() json.RawMessage {
-		if v, ok := fields["Birth"]; ok {
+		if v, ok := fields["birth"]; ok {
 			return v
 		}
 		return nil
@@ -292,10 +292,10 @@ func (r *Order) UnmarshalJSON(data []byte) error {
 			return err
 		}
 	} else {
-		return fmt.Errorf("no value specified for Birth")
+		return fmt.Errorf("no value specified for birth")
 	}
 	val = func() json.RawMessage {
-		if v, ok := fields["CustomId"]; ok {
+		if v, ok := fields["customId"]; ok {
 			return v
 		}
 		return nil
@@ -306,10 +306,10 @@ func (r *Order) UnmarshalJSON(data []byte) error {
 			return err
 		}
 	} else {
-		return fmt.Errorf("no value specified for CustomId")
+		return fmt.Errorf("no value specified for customId")
 	}
 	val = func() json.RawMessage {
-		if v, ok := fields["UnitPrice"]; ok {
+		if v, ok := fields["unitPrice"]; ok {
 			return v
 		}
 		return nil
@@ -323,7 +323,7 @@ func (r *Order) UnmarshalJSON(data []byte) error {
 		r.UnitPrice = 0
 	}
 	val = func() json.RawMessage {
-		if v, ok := fields["Amount"]; ok {
+		if v, ok := fields["amount"]; ok {
 			return v
 		}
 		return nil
@@ -337,7 +337,7 @@ func (r *Order) UnmarshalJSON(data []byte) error {
 		r.Amount = 0
 	}
 	val = func() json.RawMessage {
-		if v, ok := fields["Credit"]; ok {
+		if v, ok := fields["credit"]; ok {
 			return v
 		}
 		return nil
@@ -351,7 +351,7 @@ func (r *Order) UnmarshalJSON(data []byte) error {
 		r.Credit = 0
 	}
 	val = func() json.RawMessage {
-		if v, ok := fields["Distance"]; ok {
+		if v, ok := fields["distance"]; ok {
 			return v
 		}
 		return nil

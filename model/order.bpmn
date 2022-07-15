@@ -1,12 +1,123 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" id="Definitions_00y2ot9" targetNamespace="http://bpmn.io/schema/bpmn" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" exporter="Camunda Modeler" exporterVersion="5.0.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.0.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_00y2ot9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.1.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="1.3.0">
   <bpmn:process id="Process_0l3cyxq" isExecutable="true">
-    <bpmn:startEvent id="StartEvent_1" />
+    <bpmn:startEvent id="receive_order" name="Order Message">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="= source" target="OutputVariable_2lsmggs" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_0p07juu</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0i5q388" messageRef="Message_2a9cb4b" />
+    </bpmn:startEvent>
+    <bpmn:exclusiveGateway id="order_check_available_credit" name="Check available credit">
+      <bpmn:incoming>Flow_0p07juu</bpmn:incoming>
+      <bpmn:outgoing>order_enough_credit</bpmn:outgoing>
+      <bpmn:outgoing>order_insufficient_credit</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="order_enough_credit" name="enough Credit" sourceRef="order_check_available_credit" targetRef="order_check_ware_amount">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Credit - UnitPrice * Amount &gt;= 0</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="order_insufficient_credit" name="insufficient Credit" sourceRef="order_check_available_credit" targetRef="Activity_08girv0">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Credit - UnitPrice * Amount &lt; 0</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0p07juu" sourceRef="receive_order" targetRef="order_check_available_credit" />
+    <bpmn:sendTask id="Activity_08girv0" name="Cancel order">
+      <bpmn:incoming>order_insufficient_credit</bpmn:incoming>
+      <bpmn:incoming>order_ware_not_available</bpmn:incoming>
+    </bpmn:sendTask>
+    <bpmn:exclusiveGateway id="order_ware_availability" name="Ware availabilty">
+      <bpmn:incoming>Flow_033pe59</bpmn:incoming>
+      <bpmn:outgoing>Flow_1o2ruj5</bpmn:outgoing>
+      <bpmn:outgoing>order_ware_not_available</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_033pe59" sourceRef="order_check_ware_amount" targetRef="order_ware_availability" />
+    <bpmn:sequenceFlow id="Flow_1o2ruj5" name="enough ware" sourceRef="order_ware_availability" targetRef="Activity_0zzccct">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Amount &lt; Warehouse_available_amount</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="order_ware_not_available" name="ware not available" sourceRef="order_ware_availability" targetRef="Activity_08girv0">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">Amount &lt; Warehouse_available_amount</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sendTask id="Activity_0zzccct" name="send order confirmation">
+      <bpmn:incoming>Flow_1o2ruj5</bpmn:incoming>
+    </bpmn:sendTask>
+    <bpmn:serviceTask id="order_check_ware_amount" name="Check available amount (Warehouse)">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="order_check_ware_amount" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>order_enough_credit</bpmn:incoming>
+      <bpmn:outgoing>Flow_033pe59</bpmn:outgoing>
+    </bpmn:serviceTask>
   </bpmn:process>
+  <bpmn:message id="Message_2a9cb4b" name="Message_2a9cb4b" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_0l3cyxq">
-      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
-        <dc:Bounds x="179" y="159" width="36" height="36" />
+      <bpmndi:BPMNEdge id="Flow_01n4ode_di" bpmnElement="order_enough_credit">
+        <di:waypoint x="300" y="282" />
+        <di:waypoint x="300" y="200" />
+        <di:waypoint x="420" y="200" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="321" y="173" width="70" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0tnjorl_di" bpmnElement="order_insufficient_credit">
+        <di:waypoint x="300" y="332" />
+        <di:waypoint x="300" y="410" />
+        <di:waypoint x="740" y="410" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="347" y="383" width="85" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0p07juu_di" bpmnElement="Flow_0p07juu">
+        <di:waypoint x="215" y="307" />
+        <di:waypoint x="275" y="307" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_033pe59_di" bpmnElement="Flow_033pe59">
+        <di:waypoint x="520" y="200" />
+        <di:waypoint x="565" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1o2ruj5_di" bpmnElement="Flow_1o2ruj5">
+        <di:waypoint x="590" y="175" />
+        <di:waypoint x="590" y="130" />
+        <di:waypoint x="740" y="130" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="631" y="103" width="64" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0bo2ob7_di" bpmnElement="order_ware_not_available">
+        <di:waypoint x="590" y="225" />
+        <di:waypoint x="590" y="390" />
+        <di:waypoint x="740" y="390" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="618" y="363" width="89" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_1uazehf_di" bpmnElement="receive_order">
+        <dc:Bounds x="179" y="289" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="159" y="332" width="76" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_07x2t52_di" bpmnElement="order_check_available_credit" isMarkerVisible="true">
+        <dc:Bounds x="275" y="282" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="333" y="293" width="78" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1wnx4qs_di" bpmnElement="order_check_ware_amount">
+        <dc:Bounds x="420" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1swvd2e_di" bpmnElement="order_ware_availability" isMarkerVisible="true">
+        <dc:Bounds x="565" y="175" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="624" y="193" width="78" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1nc31qn_di" bpmnElement="Activity_0zzccct">
+        <dc:Bounds x="740" y="90" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1brxbv1_di" bpmnElement="Activity_08girv0">
+        <dc:Bounds x="740" y="370" width="100" height="80" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

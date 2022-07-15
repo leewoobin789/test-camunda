@@ -5,41 +5,41 @@
 	"doc": "value schema for incoming topic ex) order",
 	"fields": [
 		{
-			"name": "Name", 
+			"name": "name", 
 			"type": "string"
 		},
 		{
-			"name": "FamilyName", 
+			"name": "familyName", 
 			"type": "string"
 		},
 		{
-			"name": "Birth", 
+			"name": "birth", 
 			"type": {
 				"type": "int",
 				"logicalType": "date"
 			}
 		},
 		{
-			"name": "CustomId", 
+			"name": "customId", 
 			"type": "string"
 		},
 		{
-			"name": "UnitPrice", 
+			"name": "unitPrice", 
 			"type": "double", 
 			"default": 0
 		},
 		{
-			"name": "Amount", 
+			"name": "amount", 
 			"type": "int", 
 			"default": 0
 		},
 		{
-			"name": "Credit", 
+			"name": "credit", 
 			"type": "double", 
 			"default": 0
 		},
 		{
-			"name": "Distance",
+			"name": "distance",
 			"type": "int",
 			"default": 0
 		}
