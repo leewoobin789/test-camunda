@@ -6,15 +6,21 @@ cp-zookeeper:
   servers: 1
   image: confluentinc/cp-zookeeper
   imageTag: 6.1.0
+  prometheus:
+    jmx:
+      enabled: false
 
 ## ------------------------------------------------------
 ## Kafka
 ## ------------------------------------------------------
 cp-kafka:
   enabled: true
-  brokers: 2
+  brokers: 3
   image: confluentinc/cp-enterprise-kafka
   imageTag: 6.1.0
+  prometheus:
+    jmx:
+      enabled: false
 
 ## ------------------------------------------------------
 ## Schema Registry
@@ -23,6 +29,9 @@ cp-schema-registry:
   enabled: true
   image: confluentinc/cp-schema-registry
   imageTag: 6.1.0
+  prometheus:
+    jmx:
+      enabled: false
 
 ## ------------------------------------------------------
 ## REST Proxy
@@ -31,6 +40,9 @@ cp-kafka-rest:
   enabled: false
   image: confluentinc/cp-kafka-rest
   imageTag: 6.1.0
+  prometheus:
+    jmx:
+      enabled: false
 
 ## ------------------------------------------------------
 ## Kafka Connect
@@ -39,6 +51,9 @@ cp-kafka-connect:
   enabled: true
   image: confluentinc/cp-kafka-connect
   imageTag: 6.1.0
+  prometheus:
+    jmx:
+      enabled: false
 
 ## ------------------------------------------------------
 ## KSQL Server
@@ -47,11 +62,17 @@ cp-ksql-server:
   enabled: false
   image: confluentinc/cp-ksqldb-server
   imageTag: 6.1.0
+  prometheus:
+    jmx:
+      enabled: false
 
 ## ------------------------------------------------------
 ## Control Center
 ## ------------------------------------------------------
 cp-control-center:
-  enabled: false
+  enabled: true
   image: confluentinc/cp-enterprise-control-center
   imageTag: 6.1.0
+  prometheus:
+    jmx:
+      enabled: false

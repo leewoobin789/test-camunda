@@ -8,8 +8,10 @@ DO_DEPLOY="${3:-false}"
 #Constants
 DEP_CLUSTER_NAME="demo"
 
-INCOMING_TOPIC="com.topic.in"
-OUTGOING_TOPIC="com.topic.out"
+INCOMING_TOPIC="com.topic.in.order_created"
+OUTGOING_TOPIC_1="com.topic.out.order_accepted"
+OUTGOING_TOPIC=_2"com.topic.out.order_canceled"
+
 
 CONSUMER_SERVICE="consumer-service"
 PRODUCER_SERVICE="producer-service"
@@ -33,7 +35,7 @@ setup_kafka_cluster() {
     fi
 
     echo "Kafka cluster is being deployed"
-    helm install --set cp-schema-registry.enabled=true,cp-kafka-rest.enabled=false,cp-kafka-connect.enabled=false,cp-ksql-server.enabled=false \
+    helm install -f ./config/confluent-value.yaml \
         $DEP_CLUSTER_NAME confluentinc/cp-helm-charts || true
 }
 
@@ -43,16 +45,24 @@ wait_for_Kafka() {
     declare -a num=("0" "1" "2")
     for i in "${num[@]}"
     do
-        kubectl wait --for=condition=ready --timeout=100s pod/$DEP_CLUSTER_NAME-cp-kafka-${i}
-        kubectl wait --for=condition=ready --timeout=100s pod/$DEP_CLUSTER_NAME-cp-zookeeper-${i}
+        kubectl wait --for=condition=ready --timeout=120s pod/$DEP_CLUSTER_NAME-cp-kafka-${i}
+        kubectl wait --for=condition=ready --timeout=120s pod/$DEP_CLUSTER_NAME-cp-zookeeper-${i}
     done
 }
 
 create_topic() {
-    sleep 20
     TOPIC=$1
     echo "Topic($TOPIC) is being created"
     kubectl exec -c cp-kafka-broker -it $DEP_CLUSTER_NAME-cp-kafka-0 -- /bin/bash /usr/bin/kafka-topics --create --zookeeper $DEP_CLUSTER_NAME-cp-zookeeper:2181 --topic $TOPIC --partitions 3 --replication-factor 1
+}
+
+config_connect() {
+    #TODO: confluent hub install dependencies
+    connect_pod=$(kubectl get pods --no-headers -o custom-columns=":metadata.name" | grep "connect")
+    kubectl cp ./config/kafka-connect $connect_pod:config/.
+    for file in config/kafka-connect/*.json; do
+        [ -f "$file" ] && kubectl exec -it $connect_pod -- curl -X POST -H "Content-Type: application/json" --data @$file http://localhost:8083/connectors
+    done
 }
 
 
@@ -125,10 +135,15 @@ else
     CONSUMER_EXISTENCE="$(kubectl get deployment --no-headers -o custom-columns=":metadata.name" | grep "$CONSUMER_SERVICE")"
     if [ -z "${CONSUMER_EXISTENCE}" ]; then
         wait_for_Kafka
+        sleep 10
         create_topic "$INCOMING_TOPIC"
         sleep 2
-        create_topic "$OUTGOING_TOPIC"
+        create_topic "$OUTGOING_TOPIC_1"
+        sleep 2
+        create_topic "$OUTGOING_TOPIC_2"
     fi
+    
+    config_connect
 fi
 
 echo "finished"

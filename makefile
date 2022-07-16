@@ -11,7 +11,7 @@ deploy-service:
 	bash setup_dep.sh ${CLUSTER_NAME} ${NAMESPACE} true
 
 kind-delete:
-	kind delete cluster --name ${CLUSTER_NAME}
+	kind delete cluster --name ${CLUSTER_FULL_NAME}
 
 kind-setup:
 	kind create cluster --config=./config/kind-config.yaml
