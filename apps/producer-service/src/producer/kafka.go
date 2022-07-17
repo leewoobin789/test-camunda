@@ -8,7 +8,7 @@ import (
 )
 
 type CustomProducer interface {
-	Send(topic string, key string, value any) error
+	Send(topic string, key string, value interface{}) error
 }
 
 type CustomKafkaProducer struct {
@@ -40,8 +40,8 @@ func NewCustomKafkaProducer(kafkaServer string, schemaRegistryUrl string) Custom
 	}
 }
 
-func (k CustomKafkaProducer) Send(topic string, key string, value any) error {
-	payload, err := k.serializer.Serialize(topic, &value)
+func (k CustomKafkaProducer) Send(topic string, key string, value interface{}) error {
+	payload, err := k.serializer.Serialize(topic, value)
 	if err != nil {
 		return err
 	}

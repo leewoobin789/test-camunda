@@ -12,10 +12,10 @@
       <bpmn:outgoing>order_insufficient_credit</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="order_enough_credit" name="enough Credit" sourceRef="order_check_available_credit" targetRef="order_check_ware_amount">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">credit &gt;= unitPrice * amount</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=credit &gt;= unitPrice * amount</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="order_insufficient_credit" name="insufficient Credit" sourceRef="order_check_available_credit" targetRef="Activity_08girv0">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">credit &lt; unitPrice * amount</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=credit &lt; unitPrice * amount</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_0p07juu" sourceRef="receive_order" targetRef="order_check_available_credit" />
     <bpmn:sendTask id="Activity_08girv0" name="Cancel order">
@@ -35,7 +35,7 @@
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_033pe59" sourceRef="order_check_ware_amount" targetRef="order_ware_availability" />
     <bpmn:sequenceFlow id="order_ware_not_available" name="ware not available" sourceRef="order_ware_availability" targetRef="Activity_08girv0">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">amount &gt; warehouse.availableAmount</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=amount &gt; warehouse.availableAmount</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sendTask id="Activity_0zzccct" name="send order confirmation">
       <bpmn:extensionElements>
@@ -54,7 +54,7 @@
       <bpmn:outgoing>Flow_033pe59</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_1o2ruj5" name="enough ware" sourceRef="order_ware_availability" targetRef="Activity_0zzccct">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">amount &lt;= warehouse.availableAmount</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=amount &lt;= warehouse.availableAmount</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:textAnnotation id="TextAnnotation_189se9d">
       <bpmn:text>Topic: com.topic.in.order_created</bpmn:text>
@@ -72,18 +72,6 @@
   <bpmn:message id="Message_2a9cb4b" name="order_created" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_0l3cyxq">
-      <bpmndi:BPMNShape id="TextAnnotation_189se9d_di" bpmnElement="TextAnnotation_189se9d">
-        <dc:Bounds x="180" y="270" width="100" height="55" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_0xxxv3q_di" bpmnElement="TextAnnotation_0xxxv3q">
-        <dc:Bounds x="760" y="80" width="100" height="55" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="TextAnnotation_0a9068t_di" bpmnElement="TextAnnotation_0a9068t">
-        <dc:Bounds x="770" y="349" width="100" height="55" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1o2ruj5_di" bpmnElement="Flow_1o2ruj5">
         <di:waypoint x="580" y="245" />
         <di:waypoint x="580" y="200" />
@@ -136,12 +124,6 @@
           <dc:Bounds x="333" y="363" width="78" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1wnx4qs_di" bpmnElement="order_check_ware_amount">
-        <dc:Bounds x="400" y="230" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1nc31qn_di" bpmnElement="Activity_0zzccct">
-        <dc:Bounds x="720" y="160" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1brxbv1_di" bpmnElement="Activity_08girv0">
         <dc:Bounds x="720" y="440" width="100" height="80" />
       </bpmndi:BPMNShape>
@@ -150,6 +132,24 @@
         <bpmndi:BPMNLabel>
           <dc:Bounds x="614" y="263" width="78" height="14" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1nc31qn_di" bpmnElement="Activity_0zzccct">
+        <dc:Bounds x="720" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1wnx4qs_di" bpmnElement="order_check_ware_amount">
+        <dc:Bounds x="400" y="230" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_189se9d_di" bpmnElement="TextAnnotation_189se9d">
+        <dc:Bounds x="180" y="270" width="100" height="55" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0xxxv3q_di" bpmnElement="TextAnnotation_0xxxv3q">
+        <dc:Bounds x="760" y="80" width="100" height="55" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0a9068t_di" bpmnElement="TextAnnotation_0a9068t">
+        <dc:Bounds x="770" y="349" width="100" height="55" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Association_0u9oknd_di" bpmnElement="Association_0u9oknd">
         <di:waypoint x="203" y="360" />

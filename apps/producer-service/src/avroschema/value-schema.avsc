@@ -5,6 +5,11 @@
 	"doc": "value schema for incoming topic ex) order",
 	"fields": [
 		{
+			"name": "eventName", 
+			"type": "string",
+			"default": "order_created"
+		},
+		{
 			"name": "name", 
 			"type": "string"
 		},

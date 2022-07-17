@@ -8,9 +8,9 @@
         "value.converter.schema.registry.url": "http://demo-cp-schema-registry:8081",
         "value.converter.enhanced.avro.schema.support": true,
         
-        "__zeebe.client.gateway.address": "process-demo-zeebe-gateway:26500",
-        "__zeebe.client.requestTimeout": "10000",
-        "__zeebe.client.security.plaintext": true,
+        "zeebe.client.gateway.address": "process-demo-zeebe-gateway:26500",
+        "zeebe.client.requestTimeout": "10000",
+        "zeebe.client.security.plaintext": true,
 
         "zeebe.client.job.worker": "kafka-connector",
         "zeebe.client.worker.maxJobsActive": "100",

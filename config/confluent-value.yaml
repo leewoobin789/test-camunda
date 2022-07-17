@@ -49,8 +49,9 @@ cp-kafka-rest:
 ## ------------------------------------------------------
 cp-kafka-connect:
   enabled: true
-  image: confluentinc/cp-kafka-connect
-  imageTag: 6.1.0
+  image: zeebe-connect #confluentinc/cp-kafka-connect
+  imageTag: latest
+  imagePullPolicy: Never
   prometheus:
     jmx:
       enabled: false

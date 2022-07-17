@@ -10,7 +10,7 @@ DEP_CLUSTER_NAME="demo"
 
 INCOMING_TOPIC="com.topic.in.order_created"
 OUTGOING_TOPIC_1="com.topic.out.order_accepted"
-OUTGOING_TOPIC=_2"com.topic.out.order_canceled"
+OUTGOING_TOPIC_2="com.topic.out.order_canceled"
 
 
 CONSUMER_SERVICE="consumer-service"
@@ -41,12 +41,12 @@ setup_kafka_cluster() {
 
 wait_for_Kafka() {
     echo "Waiting for kafka cluster to be deployed successfully"
-    kubectl wait --for=condition=available --timeout=300s deployment/$DEP_CLUSTER_NAME-cp-control-center # to prevent topic to be generated before consumer deployed
+    kubectl wait --for=condition=available --timeout=-1s deployment/$DEP_CLUSTER_NAME-cp-control-center # to prevent topic to be generated before consumer deployed
     declare -a num=("0" "1" "2")
     for i in "${num[@]}"
     do
-        kubectl wait --for=condition=ready --timeout=120s pod/$DEP_CLUSTER_NAME-cp-kafka-${i}
-        kubectl wait --for=condition=ready --timeout=120s pod/$DEP_CLUSTER_NAME-cp-zookeeper-${i}
+        kubectl wait --for=condition=ready --timeout=-1s pod/$DEP_CLUSTER_NAME-cp-kafka-${i}
+        kubectl wait --for=condition=ready --timeout=-1s pod/$DEP_CLUSTER_NAME-cp-zookeeper-${i}
     done
 }
 
@@ -56,15 +56,29 @@ create_topic() {
     kubectl exec -c cp-kafka-broker -it $DEP_CLUSTER_NAME-cp-kafka-0 -- /bin/bash /usr/bin/kafka-topics --create --zookeeper $DEP_CLUSTER_NAME-cp-zookeeper:2181 --topic $TOPIC --partitions 3 --replication-factor 1
 }
 
+build_connect() {
+    connect_name="zeebe-connect"
+    docker rm -f $connect_name
+    docker rmi $(docker images | grep "$connect_name") || true
+    docker build config/kafka-connect/. -t $connect_name
+
+    kind load docker-image --name ${ClUSTER_NAME} $connect_name
+}
+
 config_connect() {
-    #TODO: confluent hub install dependencies
+    sleep 40
     connect_pod=$(kubectl get pods --no-headers -o custom-columns=":metadata.name" | grep "connect")
-    kubectl cp ./config/kafka-connect $connect_pod:config/.
+
     for file in config/kafka-connect/*.json; do
         [ -f "$file" ] && kubectl exec -it $connect_pod -- curl -X POST -H "Content-Type: application/json" --data @$file http://localhost:8083/connectors
     done
 }
 
+kill_pod() {
+    connect_pod=$(kubectl get pods --no-headers -o custom-columns=":metadata.name" | grep "$1")
+    kubectl delete pod $connect_pod
+    kubectl wait --for=condition=available --timeout=300s deployment/demo-cp-kafka-connect
+}
 
 ##### SERVICE SETUP
 delete() {
@@ -128,21 +142,22 @@ if [ "$DO_DEPLOY" = true ]; then
     deploy "$PRODUCER_SERVICE" "$DEP_CLUSTER_NAME-cp-kafka:9092" \
         "http://$DEP_CLUSTER_NAME-cp-schema-registry:8081" "$INCOMING_TOPIC"
 else
-    helm repo update
-    setup_kafka_cluster
-    setup_camunda_cluster
+    #helm repo update
+    #build_connect
+    #setup_kafka_cluster
+    #setup_camunda_cluster
 
-    CONSUMER_EXISTENCE="$(kubectl get deployment --no-headers -o custom-columns=":metadata.name" | grep "$CONSUMER_SERVICE")"
-    if [ -z "${CONSUMER_EXISTENCE}" ]; then
-        wait_for_Kafka
-        sleep 10
-        create_topic "$INCOMING_TOPIC"
-        sleep 2
-        create_topic "$OUTGOING_TOPIC_1"
-        sleep 2
-        create_topic "$OUTGOING_TOPIC_2"
-    fi
-    
+    #CONSUMER_EXISTENCE="$(kubectl get deployment --no-headers -o custom-columns=":metadata.name" | grep "$CONSUMER_SERVICE")"
+    #if [ -z "${CONSUMER_EXISTENCE}" ]; then
+    #    wait_for_Kafka
+    #    sleep 20
+    #    create_topic "$INCOMING_TOPIC"
+    #    sleep 2
+    #    create_topic "$OUTGOING_TOPIC_1"
+    #    sleep 2
+    #    create_topic "$OUTGOING_TOPIC_2"
+    #fi
+    kill_pod "connect"
     config_connect
 fi
 

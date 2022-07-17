@@ -31,3 +31,9 @@ pf-cc:
 
 pf-sr:
 	kubectl port-forward service/demo-cp-schema-registry 8081:8081
+
+pf-co:
+	kubectl port-forward service/process-demo-operate 8000:80
+
+pf-czg:
+	kubectl port-forward service/process-demo-zeebe-gateway 26500:26500

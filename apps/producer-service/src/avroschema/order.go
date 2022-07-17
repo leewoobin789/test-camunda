@@ -19,6 +19,8 @@ var _ = fmt.Printf
 
 // value schema for incoming topic ex) order
 type Order struct {
+	EventName string `json:"eventName"`
+
 	Name string `json:"name"`
 
 	FamilyName string `json:"familyName"`
@@ -36,10 +38,11 @@ type Order struct {
 	Distance int32 `json:"distance"`
 }
 
-const OrderAvroCRC64Fingerprint = "OY\x8c\x02f\xba\xba\xfe"
+const OrderAvroCRC64Fingerprint = "\x9e\x80\xfa_6%D\xec"
 
 func NewOrder() Order {
 	r := Order{}
+	r.EventName = "order_created"
 	r.UnitPrice = 0
 	r.Amount = 0
 	r.Credit = 0
@@ -72,6 +75,10 @@ func DeserializeOrderFromSchema(r io.Reader, schema string) (Order, error) {
 
 func writeOrder(r Order, w io.Writer) error {
 	var err error
+	err = vm.WriteString(r.EventName, w)
+	if err != nil {
+		return err
+	}
 	err = vm.WriteString(r.Name, w)
 	if err != nil {
 		return err
@@ -112,7 +119,7 @@ func (r Order) Serialize(w io.Writer) error {
 }
 
 func (r Order) Schema() string {
-	return "{\"doc\":\"value schema for incoming topic ex) order\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"familyName\",\"type\":\"string\"},{\"name\":\"birth\",\"type\":{\"logicalType\":\"date\",\"type\":\"int\"}},{\"name\":\"customId\",\"type\":\"string\"},{\"default\":0,\"name\":\"unitPrice\",\"type\":\"double\"},{\"default\":0,\"name\":\"amount\",\"type\":\"int\"},{\"default\":0,\"name\":\"credit\",\"type\":\"double\"},{\"default\":0,\"name\":\"distance\",\"type\":\"int\"}],\"name\":\"de.topic.in.Order\",\"type\":\"record\"}"
+	return "{\"doc\":\"value schema for incoming topic ex) order\",\"fields\":[{\"default\":\"order_created\",\"name\":\"eventName\",\"type\":\"string\"},{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"familyName\",\"type\":\"string\"},{\"name\":\"birth\",\"type\":{\"logicalType\":\"date\",\"type\":\"int\"}},{\"name\":\"customId\",\"type\":\"string\"},{\"default\":0,\"name\":\"unitPrice\",\"type\":\"double\"},{\"default\":0,\"name\":\"amount\",\"type\":\"int\"},{\"default\":0,\"name\":\"credit\",\"type\":\"double\"},{\"default\":0,\"name\":\"distance\",\"type\":\"int\"}],\"name\":\"de.topic.in.Order\",\"type\":\"record\"}"
 }
 
 func (r Order) SchemaName() string {
@@ -131,41 +138,46 @@ func (_ Order) SetUnionElem(v int64) { panic("Unsupported operation") }
 func (r *Order) Get(i int) types.Field {
 	switch i {
 	case 0:
-		w := types.String{Target: &r.Name}
+		w := types.String{Target: &r.EventName}
 
 		return w
 
 	case 1:
-		w := types.String{Target: &r.FamilyName}
+		w := types.String{Target: &r.Name}
 
 		return w
 
 	case 2:
-		w := types.Int{Target: &r.Birth}
+		w := types.String{Target: &r.FamilyName}
 
 		return w
 
 	case 3:
-		w := types.String{Target: &r.CustomId}
+		w := types.Int{Target: &r.Birth}
 
 		return w
 
 	case 4:
-		w := types.Double{Target: &r.UnitPrice}
+		w := types.String{Target: &r.CustomId}
 
 		return w
 
 	case 5:
-		w := types.Int{Target: &r.Amount}
+		w := types.Double{Target: &r.UnitPrice}
 
 		return w
 
 	case 6:
-		w := types.Double{Target: &r.Credit}
+		w := types.Int{Target: &r.Amount}
 
 		return w
 
 	case 7:
+		w := types.Double{Target: &r.Credit}
+
+		return w
+
+	case 8:
 		w := types.Int{Target: &r.Distance}
 
 		return w
@@ -176,16 +188,19 @@ func (r *Order) Get(i int) types.Field {
 
 func (r *Order) SetDefault(i int) {
 	switch i {
-	case 4:
-		r.UnitPrice = 0
+	case 0:
+		r.EventName = "order_created"
 		return
 	case 5:
-		r.Amount = 0
+		r.UnitPrice = 0
 		return
 	case 6:
-		r.Credit = 0
+		r.Amount = 0
 		return
 	case 7:
+		r.Credit = 0
+		return
+	case 8:
 		r.Distance = 0
 		return
 	}
@@ -210,6 +225,10 @@ func (_ Order) AvroCRC64Fingerprint() []byte {
 func (r Order) MarshalJSON() ([]byte, error) {
 	var err error
 	output := make(map[string]json.RawMessage)
+	output["eventName"], err = json.Marshal(r.EventName)
+	if err != nil {
+		return nil, err
+	}
 	output["name"], err = json.Marshal(r.Name)
 	if err != nil {
 		return nil, err
@@ -252,6 +271,20 @@ func (r *Order) UnmarshalJSON(data []byte) error {
 	}
 
 	var val json.RawMessage
+	val = func() json.RawMessage {
+		if v, ok := fields["eventName"]; ok {
+			return v
+		}
+		return nil
+	}()
+
+	if val != nil {
+		if err := json.Unmarshal([]byte(val), &r.EventName); err != nil {
+			return err
+		}
+	} else {
+		r.EventName = "order_created"
+	}
 	val = func() json.RawMessage {
 		if v, ok := fields["name"]; ok {
 			return v

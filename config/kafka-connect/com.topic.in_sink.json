@@ -1,19 +1,21 @@
 {
     "name": "com.topic.in-sink",
     "config": {
-        "connector.class": "io.zeebe.kafka.connect.ZeebeSinkConnector",
-        "tasks.max": "1",
-        "key.converter": "org.apache.kafka.connect.storage.StringConverter",
-        "value.converter": "io.confluent.connect.avro.AvroConverter",
-        "value.converter.schema.registry.url": "http://demo-cp-schema-registry:8081",
-        "value.converter.enhanced.avro.schema.support": true,
-        "topics": "com.topic.in.order_created",
-  
-        "__zeebe.client.gateway.address": "process-demo-zeebe-gateway:26500",
-        "__zeebe.client.requestTimeout": "10000",
-        "__zeebe.client.security.plaintext": true,
-
-        "message.path.messageName": "order_created",
-        "message.path.correlationKey": "$.customId"
+      "connector.class": "io.zeebe.kafka.connect.ZeebeSinkConnector",
+      "tasks.max": "1",
+      "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+      "value.converter": "io.confluent.connect.avro.AvroConverter",
+      "errors.tolerance": "all",
+      "errors.log.enable": true,
+      "errors.log.include.messages": true,
+      "topics": "com.topic.in.order_created",
+      "errors.deadletterqueue.context.headers.enable": true,
+      "zeebe.client.gateway.address": "process-demo-zeebe-gateway:26500",
+      "zeebe.client.requestTimeout": "10000",
+      "zeebe.client.security.plaintext": "true",
+      "message.path.messageName": "$.eventName",
+      "message.path.correlationKey": "$.customId",
+      "value.converter.enhanced.avro.schema.support": "true",
+      "value.converter.schema.registry.url": "http://demo-cp-schema-registry:8081"
     }
-}
+  }

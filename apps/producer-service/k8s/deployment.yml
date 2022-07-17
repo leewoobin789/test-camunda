@@ -44,7 +44,7 @@ spec:
         - name: SCHEMA_REGISTRY_SERVER
           value: http://demo-cp-schema-registry:8081
         - name: KAFKA_TOPIC
-          value: com.topic.in
+          value: com.topic.in.order_created
         - name: POD_NAME
           valueFrom: 
             fieldRef:
