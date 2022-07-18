@@ -142,21 +142,21 @@ if [ "$DO_DEPLOY" = true ]; then
     deploy "$PRODUCER_SERVICE" "$DEP_CLUSTER_NAME-cp-kafka:9092" \
         "http://$DEP_CLUSTER_NAME-cp-schema-registry:8081" "$INCOMING_TOPIC"
 else
-    #helm repo update
-    #build_connect
-    #setup_kafka_cluster
-    #setup_camunda_cluster
+    helm repo update
+    build_connect
+    setup_kafka_cluster
+    setup_camunda_cluster
 
-    #CONSUMER_EXISTENCE="$(kubectl get deployment --no-headers -o custom-columns=":metadata.name" | grep "$CONSUMER_SERVICE")"
-    #if [ -z "${CONSUMER_EXISTENCE}" ]; then
-    #    wait_for_Kafka
-    #    sleep 20
-    #    create_topic "$INCOMING_TOPIC"
-    #    sleep 2
-    #    create_topic "$OUTGOING_TOPIC_1"
-    #    sleep 2
-    #    create_topic "$OUTGOING_TOPIC_2"
-    #fi
+    CONSUMER_EXISTENCE="$(kubectl get deployment --no-headers -o custom-columns=":metadata.name" | grep "$CONSUMER_SERVICE")"
+    if [ -z "${CONSUMER_EXISTENCE}" ]; then
+        wait_for_Kafka
+        sleep 20
+        create_topic "$INCOMING_TOPIC"
+        sleep 2
+        create_topic "$OUTGOING_TOPIC_1"
+        sleep 2
+        create_topic "$OUTGOING_TOPIC_2"
+    fi
     kill_pod "connect"
     config_connect
 fi
