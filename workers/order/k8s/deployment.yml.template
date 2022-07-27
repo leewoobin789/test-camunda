@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-camunda-worker
+  labels:
+    app: order-camunda-worker
+spec:
+  selector:
+    matchLabels:
+      app: order-camunda-worker-container
+  template:
+    metadata:
+      name: order-camunda-worker-container
+      labels:
+        app: order-camunda-worker-container
+    spec:
+      containers:
+      - name: order-camunda-worker-container
+        imagePullPolicy: Never
+        image: ## worker image
+        # ports:
+        #  - containerPort: 8080
+        #    name: apipod
+        env:
+        - name: ZEEBE_ADDRESS
+          value: VALUE_ZEEBE_ADDRESS
+        resources:
+          requests:
+            memory: "400Mi"
+            cpu: "1000m"
+          limits:
+            memory: "600Mi"
+            cpu: "1500m"

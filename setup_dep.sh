@@ -12,6 +12,7 @@ INCOMING_TOPIC="com.topic.in.order_created"
 OUTGOING_TOPIC_1="com.topic.out.order_accepted"
 OUTGOING_TOPIC_2="com.topic.out.order_canceled"
 
+ZEEBE_ADDRESS=#dynamic build
 
 CONSUMER_SERVICE="consumer-service"
 PRODUCER_SERVICE="producer-service"

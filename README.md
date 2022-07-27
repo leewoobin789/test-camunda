@@ -4,10 +4,10 @@ todo:
 
 - schema registry: go producer "DONE"
 
-- schema registry: java consumer
+- schema registry: java consumer "IN-PROGRESS"
 
-- camunda helm setup
+- camunda helm setup "DONE"
 
-- camunda worker setup
+- camunda worker setup "IN-PROGRESS"
 
-- camunda connect
+- camunda connect "DONE"

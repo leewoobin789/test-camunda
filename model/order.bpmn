@@ -48,7 +48,7 @@
     </bpmn:sendTask>
     <bpmn:serviceTask id="order_check_ware_amount" name="Check available amount (Warehouse)">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="order_check_ware_amount" />
+        <zeebe:taskDefinition type="checkWareAmount" />
       </bpmn:extensionElements>
       <bpmn:incoming>order_enough_credit</bpmn:incoming>
       <bpmn:outgoing>Flow_033pe59</bpmn:outgoing>
